@@ -1,0 +1,23 @@
+# Starts an X11 server with VNC. Then publishes this VNC
+# remote desktop as an HTML5 GUI using Guacamole. 
+#
+# You can access the X11 desktop with any modern
+# HTML5 browser on port 8080
+
+x11gui:
+  image: geggo98/x11-vnc
+  environment:
+  	RESOLUTION: 1280x1024x16
+  volumes:
+  	- /home/containers/myx11service/home:/home/xuser/
+  expose:
+    - "5900"
+guacamole:
+  image: geggo98/guacamole
+  links: x11gui
+  environment:
+   	VNCSERVERS: x11gui#5900  
+  volumes:
+  	- /home/containers/myx11service/guacamole:/etc/guacamole
+  ports:
+    - "8080:80"

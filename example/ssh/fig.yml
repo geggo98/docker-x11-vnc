@@ -1,0 +1,32 @@
+# Starts an X11 server with VNC. Then publish VNC via a
+# SSH VPN (only port forwarding, no shell). 
+#
+# To access the VNC service, connect to the SSH VPN using
+# public key authorization. Then use port forwarding to
+# "x11gui:5900". You can then access the service on the 
+# forwarded port on your local PC.
+#
+# Example:  
+# 1. First run
+#    ssh -N -p 22022 -L5900:x11gui:5900 vpn@docker-server
+# 2. Then open RealVNC on localhost, display 0 / port 5900
+#
+
+x11gui:
+  image: geggo98/x11-vnc
+  links: ssh-vpn
+  environment:
+  	RESOLUTION: 1280x1024x16
+  volumes:
+  	- /home/containers/myx11service/home:/home/xuser/
+  expose:
+    - "5900"
+ssh-vpn:
+  image: geggo98/ssh-vpn-jump-host
+  links: x11gui
+  volumes:
+  	- /home/containers/myx11service/ssh-vpn:/ssh
+  	# You must edit authorized_keys_vpn in this volume and
+  	# add your ssh public key.
+  ports:
+    - "22022:22022"
