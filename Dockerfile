@@ -13,10 +13,7 @@
 FROM ubuntu:14.04
 MAINTAINER Stefan Schwetschke "stefan@schwetschke.de"
 
-ENV REFRESHED_APT_AT 2015-01-15
-
-RUN apt-get update -y
-RUN apt-get upgrade -y
+ENV REFRESHED_APT_AT 2015-01-18
 
 # Set locale to UTF-8 to fix the locale warnings
 RUN localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || :
@@ -25,21 +22,21 @@ RUN localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || :
 ENV DEBIAN_FRONTEND noninteractive
 
 # Installing the environment required: xserver, xdm, flux box, roc-filer and ssh
-RUN apt-get install -y lxde-core lxterminal xvfb x11vnc sudo
+# and install some basic packages
+# and clean up apt-get
 
+RUN apt-get update -y && \
+	apt-get upgrade -y && \
+	apt-get install -y lxde-core lxterminal xvfb x11vnc sudo && \
+	apt-get install -y firefox xterm && \
+	apt-get clean
 
 # Fix problems with Upstart and DBus inside a docker container.
 RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
 
-# Install some basic packages
-RUN apt-get install -y firefox xterm
-
 # Copy the files into the container
 ADD . /x11-src
 RUN chmod -R a=rX /x11-src
-
-# Clean up apt-get
-RUN apt-get clean
 
 # Local user, may be overwritten by dependent build
 ENV X11_USER xclient
@@ -47,8 +44,7 @@ ENV X11_USER xclient
 # Resolution and color depth of simulated display
 ENV RESOLUTION 1280x1024x16
 
-WORKDIR /home/${X11_USER} 
-VOLUME /home/${X11_USER}
+VOLUME /home
 EXPOSE 5900
 
 # Start x11vnc
