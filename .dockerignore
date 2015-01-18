@@ -1,3 +1,7 @@
 .git
 README.md
 example
+*.sublime-project
+*.sublime-workspace
+*.sublime-project
+_sftp-config.json
