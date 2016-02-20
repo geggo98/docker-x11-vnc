@@ -9,11 +9,11 @@
 # Author: stefan@schwetschke.de
 # Date: 2014-11-06
 
-
-FROM ubuntu:14.04
+# Using Ubuntu LTS, because it gets security updates very fast
+FROM ubuntu:latest
 MAINTAINER Stefan Schwetschke "stefan@schwetschke.de"
 
-ENV REFRESHED_APT_AT 2015-01-18
+ENV REFRESHED_APT_AT 2016-02-20
 
 # Set locale to UTF-8 to fix the locale warnings
 RUN localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || :
